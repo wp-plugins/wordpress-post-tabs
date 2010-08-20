@@ -41,6 +41,8 @@ This plugin is easy to install like other plug-ins of WordPress as you need to j
 
 * To insert the tabs, you would need to use two shortcodes on your Edit Post/Page admin panel. The first shortcode is for tab names and the second shortcode represents the end of the set of the tabs. You can insert multiple number of tabset on a single page.
 * Example how to put tabs:
+
+
 `[tab name='Overview']
 This is the overview section.
 [/tab]
