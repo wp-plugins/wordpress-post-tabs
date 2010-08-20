@@ -46,9 +46,11 @@ This plugin is easy to install like other plug-ins of WordPress as you need to j
 `[tab name='Overview']
 This is the overview section.
 [/tab]
+
 [tab name='Specifications']
 Various product Specifications can be entered here.
 [/tab]
+
 [tab name='Screenshots']
 You can insert images or screenshots of the product. 
 [/tab]
