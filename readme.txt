@@ -1,5 +1,5 @@
 === WordPress Post Tabs ===
-Contributors: Tejaswini Deshpande, Sanjeev Mishra
+Contributors: internet techies
 Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation 
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 2.7
