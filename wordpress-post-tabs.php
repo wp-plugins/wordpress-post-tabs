@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: WordPress Post Tabs
-Plugin URI: http://blogern.com/wordpress-post-tabs/
-Description: WordPress Post Tabs will help you to easily display your WordPress Post or Page sections in structured tabs, so that if you are writing some review post, you can add distinct tabs representing each section of the review like overview, specifications, performance, final rating and so on. Watch Live Demo at <a href="http://blogern.com">Blogern</a>.
-Version: 1.0	
-Author: Tejaswini Deshpande, Sanjeev Mishra
+Plugin URI: http://www.clickonf5.org/wordpress-post-tabs/
+Description: WordPress Post Tabs will help you to easily display your WordPress Post or Page sections in structured tabs, so that if you are writing some review post, you can add distinct tabs representing each section of the review like overview, specifications, performance, final rating and so on. Watch Live Demo at <a href="http://www.clickonf5.org/wordpress-post-tabs/">Plugin Page</a>.
+Version: 1.1	
+Author: Internet Techies
 Author URI: http://www.clickonf5.org/about/tejaswini
-WordPress version supported: 2.7 and above
+WordPress version supported: 2.8 and above
 */
 
 /*  Copyright 2010  Internet Techies  (email : tedeshpa@gmail.com)
@@ -25,6 +25,8 @@ WordPress version supported: 2.7 and above
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+if ( ! defined( 'WPTS_PLUGIN_BASENAME' ) )
+	define( 'WPTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 function wpts_url( $path = '' ) {
 	global $wp_version;
 	if ( version_compare( $wp_version, '2.8', '<' ) ) { // Using WordPress 2.7
@@ -47,7 +49,9 @@ function activate_wpts() {
 					   'reload' => '0',
 					   'tab_code' => 'tab',
 					   'tab_end_code' => 'end_tabset',
-					   'support' => '1');
+					   'support' => '1', 
+					   'fade' => '0', 
+					   'jquerynoload' => '0');
 	if ($wpts_opts1) {
 	    $wpts = $wpts_opts1 + $wpts_opts2;
 		update_option('wpts_options',$wpts);
@@ -62,7 +66,7 @@ function activate_wpts() {
 register_activation_hook( __FILE__, 'activate_wpts' );
 global $wpts;
 $wpts = get_option('wpts_options');
-define("WPTS_VER","1.0",false);
+define("WPTS_VER","1.1",false);
 define('WPTS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 
 function wpts_wp_init() {
@@ -74,7 +78,13 @@ function wpts_wp_init() {
 		{
 			$css="css/styles/".$wpts['stylesheet'].'/style.css';
 			wp_enqueue_style( 'wpts_ui_css', wpts_url( $css ),false, WPTS_VER, 'all'); 
-			wp_enqueue_script('wpts_ui_cookie', wpts_url( 'js/jquery.cookie.js'), array('jquery','jquery-ui-core','jquery-ui-tabs'), WPTS_VER, true );
+			if(isset($wpts['jquerynoload']) and $wpts['jquerynoload']=='1') {
+			    wp_deregister_script( 'jquery' );
+				wp_enqueue_script('wpts_ui_cookie', wpts_url( 'js/jquery.cookie.js'), array('jquery-ui-core','jquery-ui-tabs'), WPTS_VER, true );
+			}
+			else{
+				wp_enqueue_script('wpts_ui_cookie', wpts_url( 'js/jquery.cookie.js'), array('jquery','jquery-ui-core','jquery-ui-tabs'), WPTS_VER, true );
+			}
 			global $wpts_count,$wpts_tab_count,$wpts_content;
 			$wpts_count=0;
 			$wpts_tab_count=0;
@@ -102,7 +112,14 @@ function wpts_wp_footer_js(){
                 var cookie = jQuery("#tabs_<?php echo $i;?>").tabs( "option", "cookie" );
                 //setter
                 jQuery("#tabs_<?php echo $i;?>").tabs( "option", "cookie", { expires: 30 } );
-             <?php }} ?> 
+				<?php if(isset($wpts['fade']) and $wpts['fade']=='1'){ ?>
+					//fx for animation
+					jQuery("#tabs_<?php echo $i;?>").tabs({ fx: { opacity: 'toggle' } });
+					//getter
+					var fx = jQuery("#tabs_<?php echo $i;?>").tabs( "option", "fx" );
+					//setter
+					jQuery("#tabs_<?php echo $i;?>").tabs( "option", "fx", { opacity: 'toggle' } );
+               <?php }}} ?> 
             });
         <?php if($wpts['reload']=='1') { ?>
             function wptReload(ar)
@@ -229,7 +246,7 @@ function wpts_end_shortcode($atts) {
 		
 		$wpts_count = $wpts_count+1;
 		$wpts_tab_count = 0;
-		$support_link='<div style="text-align:right;"><a style="color:#aaa;font-size:9px" href="http://blogern.com/" title="Tabs by WordPress Post Tabs" target="_blank">WP Post Tabs</a></div>';
+		$support_link='<div style="text-align:right;"><a style="color:#aaa;font-size:9px" href="http://www.clickonf5.org/wordpress-post-tabs" title="Tabs by WordPress Post Tabs" target="_blank">WP Post Tabs</a></div>';
 		if($wpts['support']=='1'){
 		  return $tab_content.$support_link;
 		}
@@ -243,6 +260,38 @@ function wpts_end_shortcode($atts) {
 }
 add_shortcode($wpts['tab_end_code'], 'wpts_end_shortcode');
 
+//Code to add settings page link to the main plugins page on admin
+function wpts_admin_url( $query = array() ) {
+	global $plugin_page;
+
+	if ( ! isset( $query['page'] ) )
+		$query['page'] = $plugin_page;
+
+	$path = 'admin.php';
+
+	if ( $query = build_query( $query ) )
+		$path .= '?' . $query;
+
+	$url = admin_url( $path );
+
+	return esc_url_raw( $url );
+}
+
+add_filter( 'plugin_action_links', 'wpts_plugin_action_links', 10, 2 );
+
+function wpts_plugin_action_links( $links, $file ) {
+	if ( $file != WPTS_PLUGIN_BASENAME )
+		return $links;
+
+	$url = wpts_admin_url( array( 'page' => 'wpts_settings_page' ) );
+
+	$settings_link = '<a href="' . esc_attr( $url ) . '">'
+		. esc_html( __( 'Settings') ) . '</a>';
+
+	array_unshift( $links, $settings_link );
+
+	return $links;
+}
 
 // function for adding settings page to wp-admin
 function wpts_settings() {
@@ -303,6 +352,16 @@ if ($handle = opendir($directory)) {
 <th scope="row"><label for="wpts_options[reload]">Reload the page/post everytime the tab is clicked</label></th> 
 <td><input name="wpts_options[reload]" type="checkbox" id="wpts_options_reload" value="1"  <?php checked("1", $wpts['reload']); ?> /> <small>This may increase your pageviews. </small></td> 
 </tr> 
+
+<tr valign="top"> 
+<th scope="row"><label for="wpts_options[fade]">Enable tabs 'Fade' effect</label></th> 
+<td><input name="wpts_options[fade]" type="checkbox" id="wpts_options_fade" value="1" <?php checked("1", $wpts['fade']); ?> /></td> 
+</tr> 
+
+<tr valign="top"> 
+<th scope="row"><label for="wpts_options[jquerynoload]">Do not load 'jQuery' library</label></th> 
+<td><input name="wpts_options[jquerynoload]" type="checkbox" id="wpts_options_jquerynoload" value="1" <?php checked("1", $wpts['jquerynoload']); ?> /><small> (In case jQuery.js is added by hardcoding in active theme or plugin. This will avoid js conflict)</small></td> 
+</tr> 
  
 </table> 
  
@@ -358,14 +417,23 @@ if ($handle = opendir($directory)) {
 			  <h3 class="hndle"><span>About this Plugin:</span></h3> 
 			  <div class="inside">
                 <ul>
-                <li><a href="http://blogern.com/wordpress-post-tabs/" title="Iframe Embed For YouTube Homepage" >Plugin Homepage</a></li>
-                <li><a href="http://blogern.com/" title="Visit Internet Techies" >Plugin Parent Site</a></li>
-                <li><a href="http://www.clickonf5.org/about/tejaswini" title="Iframe Embed For YouTube Author Page" >About the Author</a></li>
+                <li><a href="http://www.clickonf5.org/wordpress-post-tabs" title="Wordpress Post Tabs Homepage" >Plugin Homepage</a></li>
+                <li><a href="http://www.clickonf5.org/" title="Visit Internet Techies" >Plugin Parent Site</a></li>
+				<li><a href="http://clickonf5.com/" title="Internet Techies Forum" >Support Forum</a></li>
+                <li><a href="http://www.clickonf5.org/about/tejaswini" title="WordPress Post Tabs Author Page" >About the Author</a></li>
                 <li><a href="http://www.clickonf5.org/go/donate-wp-plugins/" title="Donate if you liked the plugin and support in enhancing this plugin and creating new plugins" >Donate with Paypal</a></li>
                 </ul> 
               </div> 
 			</div> 
      </div>
+	 <div id="side-info-column" class="inner-sidebar"> 
+			<div class="postbox"> 
+			  <h3 class="hndle"><span></span>Our Facebook Fan Page</h3> 
+			  <div class="inside">
+                <script type="text/javascript" src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_GB"></script><script type="text/javascript">FB.init("2aeebe9fb014836a6810ec4426d26f7e");</script><fb:fan profile_id="127760528543" stream="" connections="8" width="270" height="250"></fb:fan>
+              </div> 
+			</div> 
+    </div>
 
        <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 

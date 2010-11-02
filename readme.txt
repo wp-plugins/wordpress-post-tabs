@@ -1,10 +1,10 @@
 === WordPress Post Tabs ===
 Contributors: internet techies
-Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation 
+Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
-Requires at least: 2.7
+Requires at least: 2.8
 Tested up to: 3.0.1
-Stable tag: 1.0
+Stable tag: 1.1
 
 You can add various tabs to your WordPress Post or Page easily through the edit post/page panel so that your posts and pages have well organized tabbed sections.
 
@@ -17,13 +17,13 @@ As you can see the format of gadgets review on PCWorld and CNET where they provi
 =Features:=
 
 * You can choose from different styles, the looks of your post tabs. In fact you can easily create your own style, or download some pre-designed styles from the plugin page.
-[Download Custom Styles] (http://blogern.com/wordpress-post-tabs/)
+[Download Custom Styles] (http://www.clickonf5.org/wordpress-post-tabs)
 * You can choose to reload or not to reload the page (AJAX like) every time the tab is clicked by the reader.
 * If you disable the loading of the plugin on posts and pages, this plugin will not load any extra script on your other pages where you do not select to use the tabs. You would get a checkbox on each post and page, to enable the plugin on that particular page. So, for other posts and pages, there is no extra script load in the footer, and your pages remain optimized.
 * The tabs are unobtrusive and will make your posts and pages very well organized and readable for the readers.
 
-[Demo](http://blogern.com/2010/08/20/review-dell-mini10-inspiron-netbook/) |
-[Plugin Information](http://blogern.com/wordpress-post-tabs/)
+[Demo](http://www.clickonf5.org/smooth-slider) |
+[Plugin Information](http://www.clickonf5.org/wordpress-post-tabs)
 
 == Installation ==
 
@@ -43,17 +43,11 @@ This plugin is easy to install like other plug-ins of WordPress as you need to j
 * Example how to put tabs:
 
 
-`[tab name='Overview']
-This is the overview section.
-[/tab]
+`[tab name='Overview']This is the overview section.[/tab]
 
-[tab name='Specifications']
-Various product Specifications can be entered here.
-[/tab]
+[tab name='Specifications']Various product Specifications can be entered here.[/tab]
 
-[tab name='Screenshots']
-You can insert images or screenshots of the product. 
-[/tab]
+[tab name='Screenshots']You can insert images or screenshots of the product. [/tab]
 
 [end_tabset]`
 
@@ -71,10 +65,13 @@ You can insert images or screenshots of the product.
 2. Another tab on post (gallery tab)
 3. Usage on Edit Post Panel
 
-Visit the plugin page (http://blogern.com/wordpress-post-tabs/) to read more about it.
+Visit the plugin page (http://www.clickonf5.org/wordpress-post-tabs) to read more about it.
 
 == Changelog ==
 
-This is the first release of the plugin, so we would include the change log in the upcoming releases which will contain the new features added to this plugin in the respective versions
+Version 1.1 (11/02/2010)
 
-Visit the plugin page (http://blogern.com/wordpress-post-tabs/) to see the changelog and release notes.
+1. New - Facility to select 'Fade Effect' for the tabs
+2. New - Facility to disable the load of jquery on the page in case the active theme or some plugin already has it hardcoded in the header or footer. This would avoid the JS conflict.
+
+Visit the plugin page (http://www.clickonf5.org/wordpress-post-tabs) to see the changelog and release notes.
