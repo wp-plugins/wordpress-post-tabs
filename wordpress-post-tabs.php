@@ -3,7 +3,7 @@
 Plugin Name: WordPress Post Tabs
 Plugin URI: http://www.clickonf5.org/wordpress-post-tabs/
 Description: WordPress Post Tabs will help you to easily display your WordPress Post or Page sections in structured tabs, so that if you are writing some review post, you can add distinct tabs representing each section of the review like overview, specifications, performance, final rating and so on. Watch Live Demo at <a href="http://www.clickonf5.org/wordpress-post-tabs/">Plugin Page</a>.
-Version: 1.1	
+Version: 1.2	
 Author: Internet Techies
 Author URI: http://www.clickonf5.org/about/tejaswini
 WordPress version supported: 2.8 and above
@@ -66,7 +66,7 @@ function activate_wpts() {
 register_activation_hook( __FILE__, 'activate_wpts' );
 global $wpts;
 $wpts = get_option('wpts_options');
-define("WPTS_VER","1.1",false);
+define("WPTS_VER","1.2",false);
 define('WPTS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 
 function wpts_wp_init() {
@@ -215,7 +215,6 @@ function wpts_tab_shortcode($atts,$content) {
 	global $wpts_content,$wpts_tab_count,$wpts_count;
 	$wpts_content[$wpts_tab_count]['name'] = $name;
 	$wpts_content[$wpts_tab_count]['content'] = do_shortcode($content);
-
     $wpts_tab_count = $wpts_tab_count+1;
 	
     return null;
@@ -234,7 +233,8 @@ function wpts_end_shortcode($atts) {
 				else {
 				 $onclick = '';
 				}
-				$tab_content = $tab_content.'<li><a href="'.get_permalink( $post->ID ).'#tabs-'.$wpts_count.'-'.$i.'" '.$onclick.'>'.$wpts_content[$i]['name'].'</a></li>';
+				$pageurl="http://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI'];
+				$tab_content = $tab_content.'<li><a href="'.$pageurl.'#tabs-'.$wpts_count.'-'.$i.'" '.$onclick.'>'.$wpts_content[$i]['name'].'</a></li>';
 			  }
 			 $tab_content = $tab_content.'</ul>';
 			 for($i=0;$i<$wpts_tab_count;$i++) {

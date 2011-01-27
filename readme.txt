@@ -3,8 +3,8 @@ Contributors: internet techies
 Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 2.8
-Tested up to: 3.0.1
-Stable tag: 1.1
+Tested up to: 3.1
+Stable tag: 1.2
 
 You can add various tabs to your WordPress Post or Page easily through the edit post/page panel so that your posts and pages have well organized tabbed sections.
 
@@ -24,6 +24,7 @@ As you can see the format of gadgets review on PCWorld and CNET where they provi
 
 [Demo](http://www.clickonf5.org/smooth-slider) |
 [Plugin Information](http://www.clickonf5.org/wordpress-post-tabs)
+[Support Forum](http://clickonf5.com/)
 
 == Installation ==
 
@@ -67,7 +68,15 @@ This plugin is easy to install like other plug-ins of WordPress as you need to j
 
 Visit the plugin page (http://www.clickonf5.org/wordpress-post-tabs) to read more about it.
 
+== Upgrade Notice ==
+
+!!IMPORTANT!! Do upgrade to version 1.2 as the tabs break in some cases for previous versions of the tabs plugin. Read changelog for the actual fix information.
+
 == Changelog ==
+
+Version 1.2 (01/28/2011)
+
+1. Major Fix - The tabs were breaking the post/page in preview or on multiple comments page (post/page permalink change).
 
 Version 1.1 (11/02/2010)
 
