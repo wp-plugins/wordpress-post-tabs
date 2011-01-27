@@ -23,7 +23,7 @@ As you can see the format of gadgets review on PCWorld and CNET where they provi
 * The tabs are unobtrusive and will make your posts and pages very well organized and readable for the readers.
 
 [Demo](http://www.clickonf5.org/smooth-slider) |
-[Plugin Information](http://www.clickonf5.org/wordpress-post-tabs)
+[Plugin Information](http://www.clickonf5.org/wordpress-post-tabs) | 
 [Support Forum](http://clickonf5.com/)
 
 == Installation ==
