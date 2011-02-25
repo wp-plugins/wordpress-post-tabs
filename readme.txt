@@ -1,10 +1,10 @@
 === WordPress Post Tabs ===
 Contributors: internet techies
-Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery
+Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery, slider
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 2.8
 Tested up to: 3.1
-Stable tag: 1.2
+Stable tag: 1.3
 
 You can add various tabs to your WordPress Post or Page easily through the edit post/page panel so that your posts and pages have well organized tabbed sections.
 
@@ -21,10 +21,14 @@ As you can see the format of gadgets review on PCWorld and CNET where they provi
 * You can choose to reload or not to reload the page (AJAX like) every time the tab is clicked by the reader.
 * If you disable the loading of the plugin on posts and pages, this plugin will not load any extra script on your other pages where you do not select to use the tabs. You would get a checkbox on each post and page, to enable the plugin on that particular page. So, for other posts and pages, there is no extra script load in the footer, and your pages remain optimized.
 * The tabs are unobtrusive and will make your posts and pages very well organized and readable for the readers.
+* Option to put Next-Previous buttons (links) in the tabs that can be clicked to go to next or previous tab
+* Unlimited number of tab sets can be added to the post/page
+* Option to show the tabs in the posts on Index, home and category archive pages. By default this is disabled
+* Option to Enable or disable the tab cookies
 
-[Demo](http://www.clickonf5.org/smooth-slider) |
+[Demo](http://blogern.com/2010/08/20/review-dell-mini10-inspiron-netbook/) |
 [Plugin Information](http://www.clickonf5.org/wordpress-post-tabs) | 
-[Support Forum](http://clickonf5.com/)
+[Get Support](http://clickonf5.com/)
 
 == Installation ==
 
@@ -44,11 +48,23 @@ This plugin is easy to install like other plug-ins of WordPress as you need to j
 * Example how to put tabs:
 
 
-`[tab name='Overview']This is the overview section.[/tab]
+`[tab name='Overview']
 
-[tab name='Specifications']Various product Specifications can be entered here.[/tab]
+This is the overview section.
 
-[tab name='Screenshots']You can insert images or screenshots of the product. [/tab]
+[/tab]
+
+[tab name='Specifications']
+
+Various product Specifications can be entered here.
+
+[/tab]
+
+[tab name='Screenshots']
+
+You can insert images or screenshots of the product. 
+
+[/tab]
 
 [end_tabset]`
 
@@ -70,9 +86,18 @@ Visit the plugin page (http://www.clickonf5.org/wordpress-post-tabs) to read mor
 
 == Upgrade Notice ==
 
-!!IMPORTANT!! Do upgrade to version 1.2 as the tabs break in some cases for previous versions of the tabs plugin. Read changelog for the actual fix information.
+!!IMPORTANT!! Do upgrade to version 1.2 and above as the tabs break in some cases for previous versions of the tabs plugin. Read changelog for the actual fix information.
 
 == Changelog ==
+
+Version 1.3 (02/25/2011)
+
+1. Fix - Settings page link was not working on Plugins admin page on dashboard.
+2. New - You can now add 'Previous' and 'Next' links or buttons to the tabset
+3. New - Now tabs in the post can be displayed on the home, index or the category or date archive pages
+4. New - Option to disable tab cookies in the browser of the user that remembers which tab was last opened by the visitor
+5. New - Option to disable FOUC (Flash Of Unstyled Content) before the page/document loads completely
+
 
 Version 1.2 (01/28/2011)
 
