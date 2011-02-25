@@ -641,13 +641,13 @@ if ($handle = opendir($directory)) {
      
      <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 
-			  <h3 class="hndle"><span><?php _e('Latest on Internet Techies','cf5_rps'); ?></span></h3> 
+			  <h3 class="hndle"><span>Latest on Internet Techies</span></h3> 
 			  <div class="inside">
-                <?php $postsarr = cf5_rps_parse_rss_rand('http://www.clickonf5.org/feed','5'); 
+                <?php $postsarr = cf5_wpts_parse_rss_rand('http://www.clickonf5.org/feed','5'); 
 		        if($postsarr) {?>
                 <ul>
                 <?php foreach($postsarr as $itpost) { ?>
-                <li>&raquo; <a href="<?php echo $itpost['link'];?>" title="<?php _e('Read more about','cf5_rps'); ?> <?php echo $itpost['title'];?>" ><?php echo $itpost['title'];?></a></li>
+                <li>&raquo; <a href="<?php echo $itpost['link'];?>" title="Read more about <?php echo $itpost['title'];?>" ><?php echo $itpost['title'];?></a></li>
                 <?php } ?>
                 </ul> 
                 <?php } ?>
