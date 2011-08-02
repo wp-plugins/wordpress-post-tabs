@@ -92,7 +92,7 @@ Visit the plugin page (http://www.clickonf5.org/wordpress-post-tabs) to read mor
 
 == Changelog ==
 
-Version 1.3 (08/02/2011)
+Version 1.3.1 (08/02/2011)
 
 1. Fix - For some installations, tabs were not working in case the Post/Page ID was changed in footer due to custom WP Query. Fixed this issue, so that the tabs JS will pick correct tab ID in all cases.
 2. Fix - Tabs were trimmed off in RSS feed in case full post text is chosen to be displayed in the RSS feeds. Corrected the issue. Thanks Michael who brought it forward.
