@@ -3,8 +3,8 @@ Contributors: internet techies
 Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery, slider
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 2.8
-Tested up to: 3.1
-Stable tag: 1.3
+Tested up to: 3.2.1
+Stable tag: 1.3.1
 
 You can add various tabs to your WordPress Post or Page easily through the edit post/page panel so that your posts and pages have well organized tabbed sections.
 
@@ -26,9 +26,11 @@ As you can see the format of gadgets review on PCWorld and CNET where they provi
 * Option to show the tabs in the posts on Index, home and category archive pages. By default this is disabled
 * Option to Enable or disable the tab cookies
 
+[Plugin Information and FAQs](http://www.clickonf5.org/wordpress-post-tabs) | 
 [Demo](http://blogern.com/2010/08/20/review-dell-mini10-inspiron-netbook/) |
-[Plugin Information](http://www.clickonf5.org/wordpress-post-tabs) | 
 [Get Support](http://clickonf5.com/)
+
+**Find advanced and Stylish WordPress Slider Plugins at [SliderVilla](http://www.slidervilla.com/)**
 
 == Installation ==
 
@@ -89,6 +91,13 @@ Visit the plugin page (http://www.clickonf5.org/wordpress-post-tabs) to read mor
 !!IMPORTANT!! Do upgrade to version 1.2 and above as the tabs break in some cases for previous versions of the tabs plugin. Read changelog for the actual fix information.
 
 == Changelog ==
+
+Version 1.3 (08/02/2011)
+
+1. Fix - For some installations, tabs were not working in case the Post/Page ID was changed in footer due to custom WP Query. Fixed this issue, so that the tabs JS will pick correct tab ID in all cases.
+2. Fix - Tabs were trimmed off in RSS feed in case full post text is chosen to be displayed in the RSS feeds. Corrected the issue. Thanks Michael who brought it forward.
+3. Fix - An extra space used to appear before the content in the tab in some cases due to empty p tags (WordPress autop formatter). Fixed this issue.
+
 
 Version 1.3 (02/25/2011)
 

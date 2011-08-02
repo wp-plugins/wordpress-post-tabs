@@ -3,7 +3,7 @@
 Plugin Name: WordPress Post Tabs
 Plugin URI: http://www.clickonf5.org/wordpress-post-tabs/
 Description: WordPress Post Tabs will help you to easily display your WordPress Post or Page sections in structured tabs, so that if you are writing some review post, you can add distinct tabs representing each section of the review like overview, specifications, performance, final rating and so on. Watch Live Demo at <a href="http://www.clickonf5.org/wordpress-post-tabs/">Plugin Page</a>.
-Version: 1.3	
+Version: 1.3.1	
 Author: Internet Techies
 Author URI: http://www.clickonf5.org/about/tejaswini
 WordPress version supported: 2.8 and above
@@ -82,7 +82,7 @@ function activate_wpts() {
 register_activation_hook( __FILE__, 'activate_wpts' );
 global $wpts;
 $wpts = get_option('wpts_options');
-define("WPTS_VER","1.3",false);
+define("WPTS_VER","1.3.1",false);
 define('WPTS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 
 function wpts_wp_init() {
@@ -120,102 +120,6 @@ function wpts_wp_init() {
 	}
 }
 add_action( 'wp', 'wpts_wp_init' );
-
-function wpts_wp_footer_js(){
-   global $wpts,$wpts_count,$wpts_tab_count,$wpts_content; 
-	if(is_singular()) { 
-		global $post;
-		$post_id=$post->ID;
-		$enablewpts = get_post_meta($post->ID, 'enablewpts', true);
-		if( (is_page() and ((!empty($enablewpts) and $enablewpts=='1') or $wpts['pages'] != '0'  ) ) 
-			or (is_single() and ((!empty($enablewpts) and $enablewpts=='1') or $wpts['posts'] != '0'  ) ) ) 
-		{  ?>
-		   <script type="text/javascript">
-            jQuery(function() {
-            <?php 
-            if($wpts_count and $wpts_count!=0){ 
-              for($j=0;$j<$wpts_count;$j++) { 
-			    $i=$post_id.'_'.$j;	  ?>
-			    <?php if(!isset($wpts['disable_cookies']) or $wpts['disable_cookies']!='1'){ 
-				   $cookie = '{ cookie: { expires: 30 } }';
-				} 
-				else{
-				   $cookie = '';
-				}	
-						
-				?>
-				var $<?php echo 'tabs'.$i;?> = jQuery("#tabs_<?php echo $i;?>").tabs(<?php echo $cookie;?>);
-				<?php if(!isset($wpts['disable_cookies']) or $wpts['disable_cookies']!='1'){ ?>
-					//getter
-					var cookie = jQuery("#tabs_<?php echo $i;?>").tabs( "option", "cookie" );
-					//setter
-					jQuery("#tabs_<?php echo $i;?>").tabs( "option", "cookie", { expires: 30 } );
-				<?php }	?> 
-				
-				<?php if(isset($wpts['fade']) and $wpts['fade']=='1'){ ?>
-					//fx for animation
-					jQuery("#tabs_<?php echo $i;?>").tabs({ fx: { opacity: 'toggle' } });
-					//getter
-					var fx = jQuery("#tabs_<?php echo $i;?>").tabs( "option", "fx" );
-					//setter
-					jQuery("#tabs_<?php echo $i;?>").tabs( "option", "fx", { opacity: 'toggle' } );
-               <?php } ?> 
-			   <?php if(isset($wpts['nav']) and $wpts['nav']=='1') {?>
-			       var wpts_j;
-				   jQuery("#tabs_<?php echo $i;?> .ui-tabs-panel").each(function(wpts_j){
-	
-						  var totalSize = jQuery("#tabs_<?php echo $i;?> .ui-tabs-panel").size();
-				
-						  if (wpts_j < (totalSize-1)) {
-							  var wpts_next = wpts_j + 1;
-								  jQuery(this).append("<a href='#' class='wpts-next-tab wpts-mover' rel='" + wpts_next + "'><?php echo $wpts['next_text']; ?></a>");
-						  }
-				
-						  if (wpts_j >= 1) {
-							  var wpts_prev = wpts_j - 1;
-								  jQuery(this).append("<a href='#' class='wpts-prev-tab wpts-mover' rel='" + wpts_prev + "'><?php echo $wpts['prev_text']; ?></a>");
-						  }
-		
-				   });
-				   
-					jQuery('.wpts-next-tab, .wpts-prev-tab').click(function() {
-					   $<?php echo 'tabs'.$i;?>.tabs('select', jQuery(this).attr("rel"));
-					   return false;
-				   })
-			   <?php } ?>
-			   
-			   <?php }} ?>
-		
-            });
-		</script>
-		<?php } } ?>
-		
-		<?php if(is_singular() or $wpts['enable_everywhere'] == '1') { ?>
-				<?php if($wpts['disable_fouc']=='1'){ ?>
-            		 <script type="text/javascript">
-						 jQuery(function() {
-								jQuery(".wpts-hide").css({'display' : 'block'});
-						});
-				    </script> 
-		        <?php }
-		     
-			 if($wpts['reload']=='1') { ?>
-				 <script type="text/javascript">
-				 <?php if($wpts['disable_fouc']=='1'){ ?>
-					 jQuery(function() {
-							jQuery(".wpts-hide").css({'display' : 'block'});
-					});
-				  <?php }?>
-                    function wptReload(ar)
-                    {
-                     location.href=location.href.split(/\?|#/)[0] + '#' + ar;  
-                     location.reload(true);
-                     return false;
-                    }
-               </script> 
-    <?php }  } 
- }
-add_action('wp_footer', 'wpts_wp_footer_js');
 
 function wpts_edit_custom_box(){
 	global $post;
@@ -299,14 +203,24 @@ function wpts_tab_shortcode($atts,$content) {
 	$wpts_content[$wpts_tab_count]['name'] = $name;
 	$wpts_content[$wpts_tab_count]['content'] = do_shortcode($content);
     $wpts_tab_count = $wpts_tab_count+1;
-	
+		
+	if(is_feed()){
+	  $return = '<h4>'.$name.'</h4>'.$content;
+	  return $return;
+	}
     return null;
 }
 add_shortcode($wpts['tab_code'], 'wpts_tab_shortcode');
 function wpts_end_shortcode($atts) {
+ if(is_feed()){
+   return null;
+ }
+ 
  global $wpts,$post;
  global $wpts_content,$wpts_tab_count,$wpts_count,$wpts_prev_post;
+ 
  $post_id = $post->ID;
+ 
  if($wpts_prev_post!=$post_id){$wpts_count=0;}
 
 	if(is_singular() or $wpts['enable_everywhere'] == '1') {
@@ -324,7 +238,10 @@ function wpts_end_shortcode($atts) {
 			  }
 			 $tab_content = $tab_content.'</ul>';
 			 for($i=0;$i<$wpts_tab_count;$i++) {
-				$tab_content = $tab_content.'<div id="tabs-'.$post_id.'-'.$wpts_count.'-'.$i.'">'.$wpts_content[$i]['content'].'</div>';
+			    $tab_html='<div id="tabs-'.$post_id.'-'.$wpts_count.'-'.$i.'"><p>'.$wpts_content[$i]['content'].'</p></div>';
+				$tab_html=str_replace('<p></p>','',$tab_html);
+				$tab_html=str_replace('<p> </p>','',$tab_html);
+				$tab_content = $tab_content.$tab_html;
 			 }
 		}
         if($wpts['disable_fouc']=='1'){$hide='class="wpts-hide"';}else {$hide='';}
@@ -334,70 +251,70 @@ function wpts_end_shortcode($atts) {
 		$wpts_tab_count = 0;
 		
 		$script = '';
-		if(!is_singular() and $wpts['enable_everywhere'] == '1') { 
-			global $post;
-			$post_id = $post->ID;
-			$enablewpts = get_post_meta($post->ID, 'enablewpts', true);
-			if( (!empty($enablewpts) and $enablewpts=='1') or $wpts['posts'] != '0'  ) 	{  
-			  $script = $script.'<script type="text/javascript">
-				jQuery(function() {';
-				if($wpts_count and $wpts_count!=0){ 
-				    $i = $wpts_count-1;
-					if(!isset($wpts['disable_cookies']) or $wpts['disable_cookies']!='1'){ 
-					   $cookie = '{ cookie: { expires: 30 } }';
-					} 
-					else{
-					   $cookie = '';
-					}	
-					$tab_name='tabs_'.$post_id.'_'.$i;
-					
-					$script = $script.'var $'.$tab_name.' = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs('.$cookie.');';
-					 if(!isset($wpts['disable_cookies']) or $wpts['disable_cookies']!='1'){ 
-					  $script = $script.'	//getter
-						var cookie = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "cookie" );
-						//setter
-						jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "cookie", { expires: 30 } );';
-					 }	
-					 
-					if(isset($wpts['fade']) and $wpts['fade']=='1'){ 
-						$script = $script.'//fx for animation
-						jQuery("#tabs_'.$post_id.'_'.$i.'").tabs({ fx: { opacity: "toggle" } });
-						//getter
-						var fx = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "fx" );
-						//setter
-						jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "fx", { opacity: "toggle" } );';
-					} 
-				   if(isset($wpts['nav']) and $wpts['nav']=='1') {
-				   
-					   $script = $script.' var wpts_j=0;
-					   jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").each(function(wpts_j){
+
+		global $post;
+		$post_id = $post->ID;
+		$enablewpts = get_post_meta($post->ID, 'enablewpts', true);
+		if( (!empty($enablewpts) and $enablewpts=='1') or $wpts['posts'] != '0'  ) 	{  
+		  $script = $script.'<script type="text/javascript">
+			jQuery(function() {';
+			if($wpts_count and $wpts_count!=0){ 
+				$i = $wpts_count-1;
+				if(!isset($wpts['disable_cookies']) or $wpts['disable_cookies']!='1'){ 
+				   $cookie = '{ cookie: { expires: 30 } }';
+				} 
+				else{
+				   $cookie = '';
+				}	
+				$tab_name='tabs_'.$post_id.'_'.$i;
+				
+				$script = $script.'var $'.$tab_name.' = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs('.$cookie.');';
+				 if(!isset($wpts['disable_cookies']) or $wpts['disable_cookies']!='1'){ 
+				  $script = $script.'	//getter
+					var cookie = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "cookie" );
+					//setter
+					jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "cookie", { expires: 30 } );';
+				 }	
+				 
+				if(isset($wpts['fade']) and $wpts['fade']=='1'){ 
+					$script = $script.'//fx for animation
+					jQuery("#tabs_'.$post_id.'_'.$i.'").tabs({ fx: { opacity: "toggle" } });
+					//getter
+					var fx = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "fx" );
+					//setter
+					jQuery("#tabs_'.$post_id.'_'.$i.'").tabs( "option", "fx", { opacity: "toggle" } );';
+				} 
+			   if(isset($wpts['nav']) and $wpts['nav']=='1') {
+			   
+				   $script = $script.' var wpts_j=0;
+				   jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").each(function(wpts_j){
+	
+						  var totalSize = jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").size();
+				
+						  if (wpts_j < (totalSize-1)) {
+							  var wpts_next = wpts_j + 1;
+								  jQuery(this).append("<a href=\'#\' class=\'wpts-next-tab wpts-mover\' rel=\'" + wpts_next + "\'>'.$wpts['next_text'].'</a>");
+						  }
+				
+						  if (wpts_j >= 1) {
+							  var wpts_prev = wpts_j - 1;
+								  jQuery(this).append("<a href=\'#\' class=\'wpts-prev-tab wpts-mover\' rel=\'" + wpts_prev + "\'>'.$wpts['prev_text'].'</a>");
+						  }
 		
-							  var totalSize = jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").size();
-					
-							  if (wpts_j < (totalSize-1)) {
-								  var wpts_next = wpts_j + 1;
-									  jQuery(this).append("<a href=\'#\' class=\'wpts-next-tab wpts-mover\' rel=\'" + wpts_next + "\'>'.$wpts['next_text'].'</a>");
-							  }
-					
-							  if (wpts_j >= 1) {
-								  var wpts_prev = wpts_j - 1;
-									  jQuery(this).append("<a href=\'#\' class=\'wpts-prev-tab wpts-mover\' rel=\'" + wpts_prev + "\'>'.$wpts['prev_text'].'</a>");
-							  }
-			
-					   });
-					   
-						jQuery(".wpts-next-tab, .wpts-prev-tab").click(function() {
-						   $'.$tab_name.'.tabs("select", jQuery(this).attr("rel"));
-						   return false;
-					   })';
-				  } 
-				  
-				 }
-			
-				$script = $script.'})';
-			
-				$script = $script.'</script> ';
-		}}
+				   });
+				   
+					jQuery(".wpts-next-tab, .wpts-prev-tab").click(function() {
+					   $'.$tab_name.'.tabs("select", jQuery(this).attr("rel"));
+					   return false;
+				   })';
+			  } 
+			  
+			 }
+		
+			$script = $script.'})';
+		
+			$script = $script.'</script> ';
+		}
 		
 		$wpts_prev_post = $post_id;
 		
@@ -598,7 +515,7 @@ if ($handle = opendir($directory)) {
 
 </div>
 
-   <div id="side-info-column" class="inner-sidebar"> 
+<div style="float:right;width:28%;"> 
 			<div class="postbox"> 
 			  <h3 class="hndle"><span>About this Plugin:</span></h3> 
 			  <div class="inside">
@@ -611,78 +528,47 @@ if ($handle = opendir($directory)) {
                 </ul> 
               </div> 
 			</div> 
-     </div>
-	 <div id="side-info-column" class="inner-sidebar"> 
+     
+           <div class="postbox"> 
+     		 <div class="inside">
+
+              <div style="margin:10px auto;">
+                        <a href="http://slidervilla.com/" title="Premium WordPress Slider Plugins" target="_blank"><img src="<?php echo wpts_url('images/slidervilla-ad1.jpg');?>" alt="Premium WordPress Slider Plugins" /></a>
+              </div>
+            </div>
+           </div>
+           
+          <div class="postbox"> 
+			  <h3 class="hndle"><span></span><?php _e('Recommended Themes'); ?></h3> 
+			  <div class="inside">
+                     <div style="margin:10px 5px">
+                        <a href="http://slidervilla.com/go/elegantthemes/" title="Recommended WordPress Themes" target="_blank"><img src="<?php echo wpts_url('images/elegantthemes.gif');?>" alt="Recommended WordPress Themes" /></a>
+                        <p><a href="http://slidervilla.com/go/elegantthemes/" title="Recommended WordPress Themes" target="_blank">Elegant Themes</a> are attractive, compatible, affordable, SEO optimized WordPress Themes and have best support in community.</p>
+                        <p><strong>Beautiful themes, Great support!</strong></p>
+                        <p><a href="http://slidervilla.com/go/elegantthemes/" title="Recommended WordPress Themes" target="_blank">For more info visit ElegantThemes</a></p>
+                     </div>
+               </div></div>
+     
 			<div class="postbox"> 
 			  <h3 class="hndle"><span></span>Our Facebook Fan Page</h3> 
 			  <div class="inside">
                 <script type="text/javascript" src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_GB"></script><script type="text/javascript">FB.init("2aeebe9fb014836a6810ec4426d26f7e");</script><fb:fan profile_id="127760528543" stream="" connections="8" width="270" height="250"></fb:fan>
               </div> 
 			</div> 
-    </div>
-    
-     <div id="side-info-column" class="inner-sidebar"> 
-			<div class="postbox"> 
-			  <h3 class="hndle"><span>Need Custom Plugins?</span></h3> 
-			  <div class="inside">
-					<ul><li><a target="_blank" href="http://clickonf5.com/custom-development/">Hire me for Custom Developments</a></li></ul>
-              </div> 
-			</div> 
-     </div>  
 
-       <div id="side-info-column" class="inner-sidebar"> 
 			<div class="postbox"> 
 			  <h3 class="hndle"><span>Support &amp; Donations</span></h3> 
 			  <div class="inside">
 					<a target="_blank" href="http://www.clickonf5.org/go/donate-wp-plugins/" >Make a kind donation, to support our efforts</a>
               </div> 
 			</div> 
-     </div>  
-     
-     <div id="side-info-column" class="inner-sidebar"> 
-			<div class="postbox"> 
-			  <h3 class="hndle"><span>Latest on Internet Techies</span></h3> 
-			  <div class="inside">
-                <?php $postsarr = cf5_wpts_parse_rss_rand('http://www.clickonf5.org/feed','5'); 
-		        if($postsarr) {?>
-                <ul>
-                <?php foreach($postsarr as $itpost) { ?>
-                <li>&raquo; <a href="<?php echo $itpost['link'];?>" title="Read more about <?php echo $itpost['title'];?>" ><?php echo $itpost['title'];?></a></li>
-                <?php } ?>
-                </ul> 
-                <?php } ?>
-              </div> 
-			</div> 
-     </div>
-
+    </div>  
 </div> <!--end of poststuff -->
 </form>
 
 </div> <!--end of float wrap -->
 
 <?php	
-}
-function cf5_wpts_parse_rss_rand($url,$count=0){
-    $doc = new DOMDocument();
-	$doc->load($url);
-	$arrFeeds = array();
-	foreach ($doc->getElementsByTagName('item') as $node) {
-		$itemRSS = array ( 
-			'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
-			'desc' => $node->getElementsByTagName('description')->item(0)->nodeValue,
-			'link' => $node->getElementsByTagName('link')->item(0)->nodeValue,
-			'date' => $node->getElementsByTagName('pubDate')->item(0)->nodeValue
-			);
-		array_push($arrFeeds, $itemRSS);
-	}
-	$outarr=array();
-	if($count==0 or empty($count) or !isset($count)){
-	   $count=count($arrFeeds);
-	}
-	for($i=0;$i<$count;$i++) {
-	 $outarr[$i]=$arrFeeds[$i];
-	}
-	return $outarr;
 }
 // Hook for adding admin menus
 if ( is_admin() ){ // admin actions
