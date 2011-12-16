@@ -3,7 +3,7 @@ Contributors: internet techies
 Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery, slider
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 2.8
-Tested up to: 3.2.1
+Tested up to: 3.3
 Stable tag: 1.3.1
 
 You can add various tabs to your WordPress Post or Page easily through the edit post/page panel so that your posts and pages have well organized tabbed sections.
