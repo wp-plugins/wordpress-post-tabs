@@ -3,8 +3,8 @@ Contributors: internet techies
 Tags:post, page, tabs, menu, ui-tabs, sections, options, edit, shortcode, navigation, jquery, slider, tabber
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 1.4
+Tested up to: 3.9
+Stable tag: 1.4.1
 License: GPLv2
 
 Add clean and structured tabs to your WordPress Posts and Pages easily through the edit post/page panel.
@@ -110,6 +110,9 @@ Visit the plugin page (http://tabbervilla.com/wordpress-post-tabs/) for recent F
 Please use the contact form in case of any issues while upgrading.
 
 == Changelog ==
+
+Version 1.4.1 (04/24/2014)
+1. Fix: Quicktag to insert tab shortcode not working in WordPress 3.9 Post Editor 
 
 Version 1.4 (01/08/2013)
 1. New - Quick Tag to insert tabs shortcode in content area

@@ -3,13 +3,13 @@
 Plugin Name: WordPress Post Tabs
 Plugin URI: http://tabbervilla.com/wordpress-post-tabs/
 Description: WordPress Post Tabs will help you to easily display your WordPress Post or Page sections in structured tabs, so that if you are writing some review post, you can add distinct tabs representing each section of the review like overview, specifications, performance, final rating and so on. Watch Live Demo at <a href="http://tabbervilla.com/wordpress-post-tabs/">Plugin Page</a>.
-Version: 1.4	
+Version: 1.4.1	
 Author: Internet Techies
 Author URI: http://www.clickonf5.org
-WordPress version supported: 3.0 and above
+WordPress version supported: 3.5 and above
 */
 
-/*  Copyright 2010-2013  TabberVilla.com  (email : tedeshpa@gmail.com)
+/*  Copyright 2010-2014  TabberVilla.com  (email : tedeshpa@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ function activate_wpts() {
 register_activation_hook( __FILE__, 'activate_wpts' );
 global $wpts;
 $wpts = get_option('wpts_options');
-define("WPTS_VER","1.4",false);
+define("WPTS_VER","1.4.1",false);
 define('WPTS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 include_once (dirname (__FILE__) . '/tinymce/tinymce.php');
 
@@ -228,11 +228,6 @@ function wpts_end_shortcode($atts) {
 			$tab_content = '<ul>';
 			$tab_i=0;
 			for($i=0;$i<$wpts_tab_count;$i++) {
-			    if($wpts['reload']=='1') {
-			     $onclick = 'onclick="return wptReload(\'tabs-'.$post_id.'-'.$wpts_count.'-'.$i.'\')"'; }
-				else {
-				 $onclick = '';
-				}
 				$pageurl="http://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI'];
 				$link = $wpts_content[$i]['link'];
 				if ($wpts['showtitle'] == '1') {
@@ -248,9 +243,9 @@ function wpts_end_shortcode($atts) {
 					$linktarget = '';
 				}
 				if(!empty($link)) {
-					$tab_content = $tab_content.'<span class="wpts_ext"><a href="'.$wpts_content[$i]['link'] .'" '.$onclick .' '.$linktitle .$linktarget. '>'.$wpts_content[$i]['name'].'</a></span>';}
+					$tab_content = $tab_content.'<span class="wpts_ext"><a href="'.$wpts_content[$i]['link'] .'" '.$linktitle .$linktarget. '>'.$wpts_content[$i]['name'].'</a></span>';}
 				else {
-					$tab_content = $tab_content.'<li><a href="'.$pageurl.'#tabs-'.$post_id.'-'.$wpts_count.'-'.$i.'" '.$onclick .' '.$linktitle .$linktarget.'>'.$wpts_content[$i]['name'].'</a></li>';
+					$tab_content = $tab_content.'<li><a href="'.$pageurl.'#tabs-'.$post_id.'-'.$wpts_count.'-'.$i.'" '.$linktitle .$linktarget.'>'.$wpts_content[$i]['name'].'</a></li>';
 					//Selected tab by default
 					$selected=$wpts_content[$i]['selected'];
 					if($selected=='1')$data_selected=$tab_i;
@@ -288,9 +283,6 @@ function wpts_end_shortcode($atts) {
 				jQuery(document).ready(function(){ jQuery(".wpts-hide .wordpress-post-tabs").css({"display" : "block"}); });';}
 			else {$hide='';}
 			$script = $script.'<script type="text/javascript">
-			if (typeof wptReload != "function"){
-				function wptReload(ar){	location.href=location.href.split(/\?|#/)[0] + "#" + ar; location.reload(true);return false;}
-			}
 			'.$hide.'
 			jQuery(function() {';
 			if($wpts_count and $wpts_count!=0){ 
@@ -304,13 +296,32 @@ function wpts_end_shortcode($atts) {
 				}	*/
 				$tab_name='tabs_'.$post_id.'_'.$i;
 				
-				$script = $script.'var $'.$tab_name.' = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs().addClass( "ui-tabs-horizontal-top ui-helper-clearfix" );';
+				$script = $script.'var $'.$tab_name.' = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs('.$reload.').addClass( "ui-tabs-horizontal-top ui-helper-clearfix" );';
 				 
 				if(isset($wpts['fade']) and $wpts['fade']=='1'){ 
 					$script = $script.'jQuery("#tabs_'.$post_id.'_'.$i.'").tabs({ fx: { opacity: "toggle" } });';
 				}
 				//Active tab
-				if( $data_selected and !empty($data_selected) ) $script = $script.'$'.$tab_name.'.tabs("option", "active", '. $data_selected .');';
+				$sel_script='';
+			    if( isset($data['selected']) ) $sel_script = '$'.$tab_name.'.tabs("option", "active", '. $data['selected'] .');';
+				$gettab='';$settab='';
+				if(isset($wpts['reload']) and $wpts['reload']=='1') {
+					$gettab='var anchor=jQuery(document).attr("location").hash;
+							if(anchor){
+								var index = jQuery("#'.$tab_name.' div.ui-tabs-panel").index(jQuery(anchor));
+								$'.$tab_name.'.tabs("option", "active", index);
+							} else {
+								'.$sel_script.'
+							}';
+					$settab='window.location.hash = "#"+ui.newPanel.attr("id");';
+				}
+				else{
+					$script = $script.$sel_script;
+				}
+				$script=$script.$gettab.'$'.$tab_name.'.on("tabsactivate", function(event, ui){
+						'.$settab.'	
+				});';
+			
 				if(isset($wpts['nav']) and $wpts['nav']=='1') {
 				   $script = $script.' var wpts_j=0;
 				   jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").each(function(wpts_j){
