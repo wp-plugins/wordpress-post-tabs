@@ -4,10 +4,10 @@ Tags:post, page,tabs,menu,ui-tabs,shortcode,navigation,jquery,slider,tabber,best
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 3.0
 Tested up to: 3.9.1
-Stable tag: 1.5
+Stable tag: 1.5.1
 License: GPLv2
 
-Add clean, responsive and structured tabs to your WordPress Posts and Pages easily through the edit post/page panel.
+Add clean, responsive and structured tabbed content to WordPress Posts and Pages easily through the edit post/page panel.
 
 == Description ==
 
@@ -130,6 +130,11 @@ Visit the plugin page (http://tabbervilla.com/wordpress-post-tabs/) for recent F
 Please use the contact form in case of any issues while upgrading.
 
 == Changelog ==
+
+Version 1.5.1 (06/04/2014)
+
+1. New - Option to choose between prettytitle or default title
+
 Version 1.5 (05/28/2014)
 
 1. New - Added new skin 'Simple Gray'
