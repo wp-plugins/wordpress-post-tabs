@@ -3,7 +3,7 @@
 Plugin Name: WordPress Post Tabs
 Plugin URI: http://tabbervilla.com/wordpress-post-tabs/
 Description: WordPress Post Tabs will help you to easily display your WordPress Post or Page sections in structured tabs, so that if you are writing some review post, you can add distinct tabs representing each section of the review like overview, specifications, performance, final rating and so on. Watch Live Demo at <a href="http://tabbervilla.com/wordpress-post-tabs/">Plugin Page</a>.
-Version: 1.5.1	
+Version: 1.6
 Author: Internet Techies
 Author URI: http://www.clickonf5.org
 WordPress version supported: 3.5 and above
@@ -28,10 +28,10 @@ WordPress version supported: 3.5 and above
 if ( ! defined( 'WPTS_PRO_ACTIVE' ) ):
 if ( ! defined( 'WPTS_PLUGIN_BASENAME' ) )
 	define( 'WPTS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define("WPTS_VER","1.5.1",false);
+define("WPTS_VER","1.6",false);
 define('WPTS_URLPATH', trailingslashit( WP_PLUGIN_URL . '/' . plugin_basename( dirname(__FILE__) ) ) );
 global $default_tab_settings, $wpts,$wpts_db_version;
-$wpts_db_version='1.5.1'; //current version of WordPress Post Tabs database 
+$wpts_db_version='1.6'; //current version of WordPress Post Tabs database 
 $default_tab_settings=array('speed' => '1',
 	                   'transition' => '',
 					   'pages' => '1',
@@ -52,6 +52,7 @@ $default_tab_settings=array('speed' => '1',
 					   'enable_everywhere'=>'0',
 					   'disable_fouc'=>'0',
 					   'prettylinks'=>'0',
+					   'enablecookie' => '0',
 					   'css'=>''
 					   );
 $wpts = get_option('wpts_options');
@@ -112,13 +113,19 @@ add_action('plugins_loaded', 'wpts_update_db_check');
 require_once (dirname (__FILE__) . '/tinymce/tinymce.php');
 
 function wpts_wp_init() {
-    global $post,$wpts;
+    global $post,$wpts,$default_tab_settings;
+	foreach($default_tab_settings as $key=>$value){
+		if(!isset($wpts[$key])) $wpts[$key]='';
+	}
 	if(is_singular() or $wpts['enable_everywhere'] == '1') { 
 		$enablewpts = get_post_meta($post->ID, 'enablewpts', true);
 		if(isset($wpts['posts']))$wpposts=$wpts['posts'];
 		else $wpposts='';
 		if(isset($wpts['pages']))$wppages=$wpts['pages'];
 		else $wppages='';
+		// check whether cookie is set for last active tab
+		if(isset($wpts['enablecookie'])) $enablecookie = $wpts['enablecookie'];
+		else $enablecookie = '0';
 		if( (is_page() and ((!empty($enablewpts) and $enablewpts=='1') or  $wppages != '0'  ) ) 
 			or (is_single() and ((!empty($enablewpts) and $enablewpts=='1') or $wpposts != '0'  ) ) or $wpts['enable_everywhere'] == '1' ) 
 		{
@@ -131,6 +138,9 @@ function wpts_wp_init() {
 			else{
 				wp_enqueue_script('jquery-ui-tabs', false, array('jquery','jquery-ui-core'), WPTS_VER, true);
 			}
+			if($enablecookie == '1') wp_enqueue_script('jquery-cookie', wpts_plugin_url( 'js/jquery.cookie.js' ), array('jquery'), WPTS_VER, true);
+			// JS added			
+			wp_enqueue_script('jquery-posttabs', wpts_plugin_url( 'js/jquery.posttabs.js' ), array('jquery'), WPTS_VER, true);
 			global $wpts_count,$wpts_tab_count,$wpts_content,$wpts_prev_post;
 			$wpts_count=0;
 			$wpts_tab_count=0;
@@ -243,7 +253,7 @@ function wpts_end_shortcode($atts) {
  }
  global $wpts,$default_tab_settings,$post;
  global $wpts_content,$wpts_tab_count,$wpts_count,$wpts_prev_post;
- 
+ $data_selected = '';
  $post_id = $post->ID;
 
 foreach($default_tab_settings as $key=>$value){
@@ -351,54 +361,31 @@ foreach($default_tab_settings as $key=>$value){
 				   $cookie = '';
 				}	*/
 				$tab_name='tabs_'.$post_id.'_'.$i;
-				
-				$script = $script.'var $'.$tab_name.' = jQuery("#tabs_'.$post_id.'_'.$i.'").tabs().addClass( "ui-tabs-horizontal-top ui-helper-clearfix" );';
-				 
+				$fade='0';
 				if(isset($wpts['fade']) and $wpts['fade']=='1'){ 
-					$script = $script.'jQuery("#tabs_'.$post_id.'_'.$i.'").tabs({ fx: { opacity: "toggle" } });';
+					$fade='1';
 				}
-				//Active tab
-				$sel_script='';
-			    if( isset($data['selected']) ) $sel_script = '$'.$tab_name.'.tabs("option", "active", '. $data['selected'] .');';
-				$gettab='';$settab='';
-				if(isset($wpts['reload']) and $wpts['reload']=='1') {
-					$gettab='var anchor=jQuery(document).attr("location").hash;
-							if(anchor){
-								var index = jQuery("#'.$tab_name.' div.ui-tabs-panel").index(jQuery(anchor));
-								$'.$tab_name.'.tabs("option", "active", index);
-							} else {
-								'.$sel_script.'
-							}';
-					$settab='window.location.hash = "#"+ui.newPanel.attr("id");';
-				}
-				else{
-					$script = $script.$sel_script;
-				}
-				$script=$script.$gettab.'$'.$tab_name.'.on("tabsactivate", function(event, ui){
-						'.$settab.'	
+				$sel = '';
+				if( $data_selected != "" ) $sel = $data_selected;
+				$reload = '0';
+				if(isset($wpts['reload']) and $wpts['reload']=='1') $reload = '1';
+				$nav = '0';
+				if(isset($wpts['nav']) and $wpts['nav']=='1') $nav = '1';
+				$next='';$prev='';
+				if(isset($wpts['next_text'])) $next = $wpts['next_text'];
+				if(isset($wpts['prev_text'])) $prev = $wpts['prev_text'];
+				$enablecookie = '';
+				if(isset($wpts['enablecookie'])) $enablecookie = $wpts['enablecookie'];
+				$script=$script.'jQuery( "#'.$tab_name.'" ).posttabs({ tabname : "'.$tab_name.'",
+					fade 	: "'.$fade.'",
+					active	: "'.$sel.'",
+					reload	: "'.$reload.'",
+					nav	: "'.$nav.'",
+					nexttext: "'.$next.'",
+					prevtext: "'.$prev.'",
+					enablecookie:"'.$enablecookie.'"
 				});';
-			
-				if(isset($wpts['nav']) and $wpts['nav']=='1') {
-				   $script = $script.' var wpts_j=0;
-				   jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").each(function(wpts_j){
-						  var totalSize = jQuery("#tabs_'.$post_id.'_'.$i.' .ui-tabs-panel").size();
-						  if (wpts_j < (totalSize-1)) {
-							  var wpts_next = wpts_j + 1;
-								  jQuery(this).append("<a href=\'#\' class=\'wpts-next-tab wpts-mover\' rel=\'" + wpts_next + "\'>'.$wpts['next_text'].'</a>");
-						  }
-						  if (wpts_j >= 1) {
-							  var wpts_prev = wpts_j - 1;
-								  jQuery(this).append("<a href=\'#\' class=\'wpts-prev-tab wpts-mover\' rel=\'" + wpts_prev + "\'>'.$wpts['prev_text'].'</a>");
-						  }
-				   });
-				   
-					jQuery(".wpts-next-tab, .wpts-prev-tab").click(function() {
-					   $'.$tab_name.'.tabs("option", "active", jQuery(this).attr("rel"));
-					   return false;
-				   })';
-			  } 
-			  
-			 }
+			}
 			$script=apply_filters('wpts_tabjs',$script,'$'.$tab_name,$wpts_stylesheet);
 			$script = $script.'})';
 			$script = $script.'</script> ';
@@ -564,6 +551,19 @@ if ($handle = opendir($directory)) {
 </span>
 </td> 
 </tr> 
+
+<tr valign="top" class="row even"> 
+<th scope="row"><label for="wpts_options[enablecookie]"><?php _e('Enable Cookie for last active tab','wpts'); ?></label></th> 
+<td><input name="wpts_options[enablecookie]" type="checkbox" id="wpts_options_enablecookie" value="1" <?php checked("1", $wpts['enablecookie']); ?> />
+<span class="moreInfo">
+	&nbsp; <span class="trigger"> ? </span>
+	<div class="tooltip">
+	<?php _e('If checked last active tab will open by default','wpts'); ?>
+
+	</div>
+</span>
+</td> 
+</tr>
 
 <tr valign="top" class="row"> 
 <th scope="row"><label for="wpts_options[prettylinks]"><?php _e('Enable prettylinks for tab #','wpts'); ?></label></th> 

@@ -3,15 +3,15 @@ Contributors: internet techies
 Tags:post, page,tabs,menu,ui-tabs,shortcode,navigation,jquery,slider,tabber,best tabs,
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 3.0
-Tested up to: 3.9.1
-Stable tag: 1.5.1
+Tested up to: 3.9.2
+Stable tag: 1.6
 License: GPLv2
 
 Add clean, responsive and structured tabbed content to WordPress Posts and Pages easily through the edit post/page panel.
 
 == Description ==
 
-WordPress Post Tabs is a plugin for WordPress developed at <a href="http://tabbervilla.com/" rel="friend">TabberVilla</a> that will help you add tabs to your WordPress post or Page. If you want to write some review, you can create various sections of the review post and display them in a tab view, i.e. separate tab for each section. This can be looked as a menu for your individual post, so that your readers can easily notice the distinct sections of your article or post or page. These webpage real estate savers are also useful in showing 'About' or 'Contact' pages.
+WordPress Post Tabs will help you add tabs to your WordPress post or Page on current theme. For the best utilization of the webpage real estate, tabs are one of the most effective way to show more content in less area. <a href="http://tabbervilla.com/wordpress-post-tabs-pro/" rel="friend" title="Best Responsive Tab Plugin">Best Responsive Tab Plugin</a> developer at TabberVilla built this WordPress Post Tabs Lite version which comes with essential features for a tab plugin. For premium features and designs, you can take a look at the PRO version of WordPress Post Tabs plugin at <a href="http://tabbervilla.com/wordpress-post-tabs-pro/" rel="friend" title="Best Responsive Tab Plugin">TabberVilla</a>.
 
 = Features =
 
@@ -27,13 +27,15 @@ WordPress Post Tabs is a plugin for WordPress developed at <a href="http://tabbe
 = <a href="http://tabbervilla.com/wordpress-post-tabs-pro/" rel="friend">Premium</a> Features =
 
 * 12+ Skins and Style
-* Style Editor to Change Tab Colors from Admin Panel
+* Style Editor to Change Tab Title, Content Colors from Admin Panel
 * Advance QuickTag Box with Skin, Width, Location Selector
+* Widget Placeholder to have Popular Posts, Latest Post, Related Posts or any widget inside a tab
 * External Link to Tab Title
 * Nested Tabs i.e. Tabs inside a Tab
 * Linkable Tabs
 * External Link Icon
 * Image beside Tab Title
+* Smooth Scroll to Tab Title
 * Export/Import Setting Values (Helpful in Implementation on Live Site)
 * Prompt Support with Response Time less than 6 Hours
 
@@ -130,6 +132,12 @@ Visit the plugin page (http://tabbervilla.com/wordpress-post-tabs/) for recent F
 Please use the contact form in case of any issues while upgrading.
 
 == Changelog ==
+
+Version 1.6 (08/20/2014)
+
+1. New - Set cookie for last active tab.
+2. Fix - Reload on click will scroll page to top of tabs not to content.
+3. Fix - Debug errors.
 
 Version 1.5.1 (06/04/2014)
 
