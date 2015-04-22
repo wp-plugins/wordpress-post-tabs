@@ -3,7 +3,7 @@ Contributors: internet techies
 Tags:post, page,tabs,menu,ui-tabs,shortcode,navigation,jquery,slider,tabber,best tabs,
 Donate link: http://www.clickonf5.org/go/donate-wp-plugins/
 Requires at least: 3.0
-Tested up to: 3.9.2
+Tested up to: 4.2
 Stable tag: 1.6
 License: GPLv2
 
